@@ -1,0 +1,14 @@
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\bin\Debug\net10.0\INL1.exe
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\bin\Debug\net10.0\INL1.deps.json
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\bin\Debug\net10.0\INL1.runtimeconfig.json
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\bin\Debug\net10.0\INL1.dll
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\bin\Debug\net10.0\INL1.pdb
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\obj\Debug\net10.0\INL1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\obj\Debug\net10.0\INL1.AssemblyInfoInputs.cache
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\obj\Debug\net10.0\INL1.AssemblyInfo.cs
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\obj\Debug\net10.0\INL1.csproj.CoreCompileInputs.cache
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\obj\Debug\net10.0\INL1.dll
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\obj\Debug\net10.0\refint\INL1.dll
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\obj\Debug\net10.0\INL1.pdb
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\obj\Debug\net10.0\INL1.genruntimeconfig.cache
+C:\Users\rasmu\Documents\vscode\c#\Rudko_Jensen_Rasmus_INL1\INL1\obj\Debug\net10.0\ref\INL1.dll
