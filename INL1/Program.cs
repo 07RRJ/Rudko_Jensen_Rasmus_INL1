@@ -5,7 +5,7 @@
         Console.WriteLine("Hello, World!");
         Console.ResetColor(); 
         // Console.BackgroundColor = ConsoleColor.Blue;
-        // Console.ForegroundColor = ConsoleColor.Blue;
+        Console.ForegroundColor = ConsoleColor.Green;
 
         string[,] shore = {
             {"" , "" , "" , ""},
@@ -16,11 +16,13 @@
         show_shore(shore);
         follow_instructions(shore, instructions);
 
-        // reset_shore(shore);
-        // int[] ai_instructions = new int[10];
-        // make_instructions(ai_instructions);
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        reset_shore(shore);
+        int[] ai_instructions = new int[10];
+        make_instructions(ai_instructions);
         
-        // follow_instructions(shore, ai_instructions);
+        follow_instructions(shore, ai_instructions);
+        Console.ForegroundColor = ConsoleColor.White;
     }
     static void print(object text, bool line = false){
         text = $"{text}";
@@ -51,13 +53,16 @@
             if (move != 0){
                 bool not_swapped = true;
                 for (int i = 0; i < shore.GetLength(0); i++){
-                    if (not_swapped && shore[i, 0] == "farmer" && shore[i, move] != ""){
+                    if (not_swapped && shore[i, 0] != "" && shore[i, move] != ""){
+                        if (shore[i, move] == "")
                         swap(shore, move);
                         not_swapped = false;
                     }
                 }
                 if (not_swapped)
-                    print("farmer has to be on same side to move an object or animal", true);
+                    for (int i = 0; i < shore.GetLength(0); i++)
+                        if (shore[i, 0] != "")
+                            print($"{shore[i, 0]} has to be on same side\nto move something else", true);
             }
             swap(shore, 0);
             show_shore(shore);
@@ -71,26 +76,26 @@
         shore[1, column] = swap;
     }
     static void check_eaten(string[,] shore){
-        int dead_rabbit = 0, eaten_carrot = 0;
+        int object_2_lost = 0, object_3_lost = 0;
         for (int i = 0; i < shore.GetLength(0); i++){
-            if (shore[i, 0] != "farmer")
+            if (shore[i, 0] == "")
                 for (int j = 0; j < shore.GetLength(1); j++){
-                    if (shore[i, j] == "wolf" || shore[i, j] == "rabbit")
-                        dead_rabbit += 1;
-                    if (shore[i, j] == "rabbit" || shore[i, j] == "carrot")
-                        eaten_carrot += 1;
+                    if (shore[i, j] != "" || shore[i, j] != "")
+                        object_2_lost += 1;
+                    if (shore[i, j] != "" || shore[i, j] != "")
+                        object_3_lost += 1;
                 }
             for (int l = 0; l < shore.GetLength(0); l++){
-                if (dead_rabbit == 2)
+                if (object_2_lost == 2)
                     shore[l, 2] = "";
-                if (eaten_carrot == 2)
+                if (object_3_lost == 2)
                     shore[l, 3] = "";
             }
         }
-        if (eaten_carrot == 2)
-            print("the carrot got eaten", true);
-        if (dead_rabbit == 2)
-            print("the rabbit got eaten", true);
+        if (object_3_lost == 2)
+            print("lost object 2", true);
+        if (object_2_lost == 2)
+            print("lost object 3", true);
     }
     static void reset_shore(string[,] shore){
         string[,] original_shore = {
