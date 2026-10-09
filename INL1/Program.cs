@@ -2,25 +2,18 @@
 {
     private static void Main(string[] args){
         Console.Clear();
-        Console.WriteLine("Hello, World!");
-        Console.ResetColor(); 
-        // Console.BackgroundColor = ConsoleColor.Blue;
+
+        string[,] shore = set_shore();
+        int[] instructions = {2, 0, 1, 2, 3, 0, 2}; // have tested and this works
+
         Console.ForegroundColor = ConsoleColor.Green;
-
-        string[,] shore = {
-            {"" , "" , "" , ""},
-            {"farmer", "wolf", "rabbit", "carrot"}
-        };
-        int[] instructions = {2, 0, 1, 2, 3, 0, 2}; // have been tested and they work
-
         show_shore(shore);
         follow_instructions(shore, instructions);
 
+        shore = set_shore();
+        int[] ai_instructions = make_instructions(shore);
+
         Console.ForegroundColor = ConsoleColor.Yellow;
-        reset_shore(shore);
-        int[] ai_instructions = new int[10];
-        make_instructions(ai_instructions);
-        
         follow_instructions(shore, ai_instructions);
         Console.ForegroundColor = ConsoleColor.White;
     }
@@ -30,6 +23,13 @@
             Console.WriteLine(text);
         else
             Console.Write(text);
+    }
+    static string[,] set_shore(){
+        string[,] shore = {
+            {"" , "" , "" , ""},
+            {"farmer", "wolf", "rabbit", "carrot"}
+        };
+        return shore;
     }
     static void show_shore(string[,] shore){
         string msg;
@@ -46,15 +46,16 @@
     }
     static void follow_instructions(string[,] shore, int[] instructions){
         int idx = 1;
-
         foreach (int move in instructions){
+            string? key = null;
+            while (key == null)
+                key = Console.ReadLine();
             print($"=< {idx} >========================", true);
             idx += 1;
             if (move != 0){
                 bool not_swapped = true;
                 for (int i = 0; i < shore.GetLength(0); i++){
                     if (not_swapped && shore[i, 0] != "" && shore[i, move] != ""){
-                        if (shore[i, move] == "")
                         swap(shore, move);
                         not_swapped = false;
                     }
@@ -67,6 +68,14 @@
             swap(shore, 0);
             show_shore(shore);
             check_eaten(shore);
+            bool all_moved = true;
+            for (int i = 0; i < shore.GetLength(1); i++)
+                if (shore[0, i] == "")
+                    all_moved = false;
+            if (all_moved){
+                print("all moved", true);
+                return;
+            }
         }
     }
     static void swap(string[,] shore, int column){
@@ -76,46 +85,73 @@
         shore[1, column] = swap;
     }
     static void check_eaten(string[,] shore){
-        int object_2_lost = 0, object_3_lost = 0;
+        bool object_2_lost = false, object_3_lost = false;
         for (int i = 0; i < shore.GetLength(0); i++){
-            if (shore[i, 0] == "")
-                for (int j = 0; j < shore.GetLength(1); j++){
-                    if (shore[i, j] != "" || shore[i, j] != "")
-                        object_2_lost += 1;
-                    if (shore[i, j] != "" || shore[i, j] != "")
-                        object_3_lost += 1;
-                }
+            if (shore[i, 0] == ""){
+                if (shore[i, 1] != "" && shore[i, 2] != "")
+                    object_2_lost = true;
+                if (shore[i, 2] != "" && shore[i, 3] != "")
+                    object_3_lost = true;
+            }
             for (int l = 0; l < shore.GetLength(0); l++){
-                if (object_2_lost == 2)
+                if (object_2_lost)
                     shore[l, 2] = "";
-                if (object_3_lost == 2)
+                if (object_3_lost)
                     shore[l, 3] = "";
             }
         }
-        if (object_3_lost == 2)
+        if (object_2_lost)
             print("lost object 2", true);
-        if (object_2_lost == 2)
+        if (object_3_lost)
             print("lost object 3", true);
     }
-    static void reset_shore(string[,] shore){
-        string[,] original_shore = {
-            {"" , "" , "" , ""},
-            {"farmer", "wolf", "rabbit", "carrot"}
-        };
-        shore = original_shore;
-    }
-    static void make_instructions(int[] instructions){
+    static int[] make_instructions(string[,] shore){
+        List<int> instructions = new List<int>();
         Random random = new Random();
         int idx = 1, rng = 0;
         bool not_solved = true;
-        while (not_solved && idx < instructions.Length){
-            while (rng == instructions[idx - 1]){
+        while (not_solved){
+            while (rng == instructions[idx])
                 rng = random.Next(0, 4);
-            }
             instructions[idx] = rng;
-            print(rng);
-            idx += 1;
+            if (test_ai(instructions, shore))
+                idx += 1;
         }
+        foreach (int i in instructions)
+            print(i);
         print("\n", true);
+
+        int[] made_instructions = new int[instructions.Count];
+        for (int i = 0; i < instructions.Count; i++)
+            made_instructions[i] = instructions[i];
+
+        return made_instructions;
+    }
+    static bool test_ai(List<int> instructions, string[,] shore){
+        int idx = 1;
+        foreach (int move in instructions){
+            string? key = null;
+            while (key == null)
+                key = Console.ReadLine();
+            print($"=< {idx} >========================", true);
+            idx += 1;
+            if (move != 0){
+                bool not_swapped = true;
+                for (int i = 0; i < shore.GetLength(0); i++){
+                    if (not_swapped && shore[i, 0] != "" && shore[i, move] != ""){
+                        swap(shore, move);
+                        not_swapped = false;
+                    }
+                }
+                if (not_swapped)
+                    for (int i = 0; i < shore.GetLength(0); i++)
+                        if (shore[i, 0] != ""){
+                            print($"{shore[i, 0]} has to be on same side\nto move something else", true);
+                            return false;
+                        }
+            }
+            swap(shore, 0);
+        }
+    return true;
     }
 }
