@@ -1,157 +1,182 @@
 ﻿internal class Program
 {
-    private static void Main(string[] args){
-        Console.Clear();
+private static void Main(string[] args){
+    Console.Clear();
 
-        string[,] shore = set_shore();
-        int[] instructions = {2, 0, 1, 2, 3, 0, 2}; // have tested and this works
+    Console.ForegroundColor = ConsoleColor.Green;
+    string[,] shore = set_shore(); // make shore
+    show_shore(shore); // show start
 
-        Console.ForegroundColor = ConsoleColor.Green;
+    int[] instructions = {2, 0, 1, 2, 3, 0, 2};
+    follow_instructions(shore, instructions);
+
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    shore = set_shore(); // reset shore
+    int[] ai_instructions = make_instructions(shore);
+
+    show_shore(shore);
+    follow_instructions(shore, ai_instructions);
+    Console.ForegroundColor = ConsoleColor.White;
+}
+static void print(object text, bool line = true){ // like python ish
+    text = $"{text}";
+    if (line)
+        Console.WriteLine(text);
+    else
+        Console.Write(text);
+}
+static string[,] set_shore(){ // default shore
+    string[,] shore = {
+        {"" , "" , "" , ""},
+        {"farmer", "wolf", "rabbit", "carrot"}
+    };
+    return shore;
+}
+static void show_shore(string[,] shore){ // list through the shore and display it
+    string msg; // what is written out
+    bool last_msg; // if it is the last msg on line
+    for (int i = 0; i < shore.GetLength(0); i++){
+        for (int j = 0; j < shore.GetLength(1); j++){
+            msg = shore[i, j] != "" ? shore[i, j] : "_____";
+            last_msg = j == shore.GetLength(1) - 1 ? true : false;
+
+            print($"{msg}\t", last_msg); // print object and if to end the line
+        }
+
+        if (i == 0)
+            print("\n");
+    }
+}
+static void follow_instructions(string[,] shore, int[] instructions){
+    int win_condition; // what shore is not occupied
+    if (shore[0, 0] == "")
+        win_condition = 1;
+    else
+        win_condition = 0;
+
+    int idx = 1;
+    foreach (int move in instructions){
+        string? key = null;
+        while (key == null)
+            key = Console.ReadLine();
+        print($"=< {idx} >========================");
+        idx++;
+
+        if (move != 0){ // not only moving object 0 "farmer"
+            bool not_swapped = true;
+            for (int i = 0; i < shore.GetLength(0); i++){
+                if (not_swapped && shore[i, 0] != "" && shore[i, move] != ""){
+                    swap(shore, move);
+                    not_swapped = false;
+                }
+            }
+
+            if (not_swapped)
+                for (int i = 0; i < shore.GetLength(0); i++)
+                    if (shore[i, 0] != "")
+                        print($"{shore[i, 0]} has to be on same side\nto move something else");
+        }
+        swap(shore, 0);
+
         show_shore(shore);
-        follow_instructions(shore, instructions);
+        check_eaten(shore);
 
-        shore = set_shore();
-        int[] ai_instructions = make_instructions(shore);
+        bool all_moved = true;
+        for (int i = 0; i < shore.GetLength(1); i++)
+            if (shore[win_condition, i] == "")
+                all_moved = false;
 
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        follow_instructions(shore, ai_instructions);
-        Console.ForegroundColor = ConsoleColor.White;
-    }
-    static void print(object text, bool line = false){
-        text = $"{text}";
-        if (line)
-            Console.WriteLine(text);
-        else
-            Console.Write(text);
-    }
-    static string[,] set_shore(){
-        string[,] shore = {
-            {"" , "" , "" , ""},
-            {"farmer", "wolf", "rabbit", "carrot"}
-        };
-        return shore;
-    }
-    static void show_shore(string[,] shore){
-        string msg;
-        bool last_msg;
-        for (int i = 0; i < shore.GetLength(0); i++){
-            for (int j = 0; j < shore.GetLength(1); j++){
-                msg = shore[i, j] != "" ? shore[i, j] : "_____";
-                last_msg = j == shore.GetLength(1) - 1 ? true : false; 
-                print($"{msg}\t", last_msg);
-            }
-            if (i == 0)
-                print("\n", true);
+        if (all_moved){
+            print("all moved");
+            return;
         }
     }
-    static void follow_instructions(string[,] shore, int[] instructions){
-        int idx = 1;
-        foreach (int move in instructions){
-            string? key = null;
-            while (key == null)
-                key = Console.ReadLine();
-            print($"=< {idx} >========================", true);
-            idx += 1;
-            if (move != 0){
-                bool not_swapped = true;
-                for (int i = 0; i < shore.GetLength(0); i++){
-                    if (not_swapped && shore[i, 0] != "" && shore[i, move] != ""){
-                        swap(shore, move);
-                        not_swapped = false;
-                    }
-                }
-                if (not_swapped)
-                    for (int i = 0; i < shore.GetLength(0); i++)
-                        if (shore[i, 0] != "")
-                            print($"{shore[i, 0]} has to be on same side\nto move something else", true);
+    print($"==============================");
+}
+static void swap(string[,] shore, int column){ // switch row of an object
+    string swap;
+    swap = shore[0, column];
+    shore[0, column] = shore[1, column];
+    shore[1, column] = swap;
+}
+static void check_eaten(string[,] shore){ // shows how and where things went wrong
+    for (int i = 0; i < shore.GetLength(0); i++){
+        if (shore[i, 0] == ""){ // if object 0 (farmer) is not on that side
+            if (shore[i, 2] != "" && shore[i, 3] != ""){ // if object 2 and 3
+                print("lost object 3");
+                shore[i, 3] = "";
             }
-            swap(shore, 0);
-            show_shore(shore);
-            check_eaten(shore);
-            bool all_moved = true;
-            for (int i = 0; i < shore.GetLength(1); i++)
-                if (shore[0, i] == "")
-                    all_moved = false;
-            if (all_moved){
-                print("all moved", true);
-                return;
+            if (shore[i, 1] != "" && shore[i, 2] != ""){ // if object 1 and 2
+                print("lost object 2");
+                shore[i, 2] = ""; 
             }
         }
+        // for obj 3 to disapear it has to be on same side as obj 2
+        // so as long obj 2 gets removed before obj 3 it works well
     }
-    static void swap(string[,] shore, int column){
-        string swap;
-        swap = shore[0, column];
-        shore[0, column] = shore[1, column];
-        shore[1, column] = swap;
-    }
-    static void check_eaten(string[,] shore){
-        bool object_2_lost = false, object_3_lost = false;
-        for (int i = 0; i < shore.GetLength(0); i++){
-            if (shore[i, 0] == ""){
-                if (shore[i, 1] != "" && shore[i, 2] != "")
-                    object_2_lost = true;
-                if (shore[i, 2] != "" && shore[i, 3] != "")
-                    object_3_lost = true;
-            }
-            for (int l = 0; l < shore.GetLength(0); l++){
-                if (object_2_lost)
-                    shore[l, 2] = "";
-                if (object_3_lost)
-                    shore[l, 3] = "";
-            }
+}
+static bool anything_eaten(string[,] shore){ // does not remove just check if invalid move
+    for (int i = 0; i < shore.GetLength(0); i++){
+        if (shore[i, 0] == ""){ // no object 0 "farmer" present
+            if (shore[i, 1] != "" && shore[i, 2] != "")
+                return true;
+            if (shore[i, 2] != "" && shore[i, 3] != "")
+                return true;
         }
-        if (object_2_lost)
-            print("lost object 2", true);
-        if (object_3_lost)
-            print("lost object 3", true);
     }
-    static int[] make_instructions(string[,] shore){
-        List<int> instructions = new List<int>();
-        Random random = new Random();
-        int idx = 1, rng = 0;
-        bool not_solved = true;
-        while (not_solved){
-            while (rng == instructions[idx])
-                rng = random.Next(0, 4);
-            instructions[idx] = rng;
-            if (test_ai(instructions, shore))
-                idx += 1;
-        }
-        foreach (int i in instructions)
-            print(i);
-        print("\n", true);
+    return false;
+}
+static int[] make_instructions(string[,] shore){ // start and make instructions
+    List<int> instructions = new List<int>();
 
-        int[] made_instructions = new int[instructions.Count];
-        for (int i = 0; i < instructions.Count; i++)
-            made_instructions[i] = instructions[i];
+    solve(shore, instructions, -1); // trial and error
 
-        return made_instructions;
+    int[] made_instructions = new int[instructions.Count];
+    int idx = 0;
+    foreach (int move in instructions){ // fix new instruction array
+        print(move, false);
+        made_instructions[idx] = move;
+        idx++;
     }
-    static bool test_ai(List<int> instructions, string[,] shore){
-        int idx = 1;
-        foreach (int move in instructions){
-            string? key = null;
-            while (key == null)
-                key = Console.ReadLine();
-            print($"=< {idx} >========================", true);
-            idx += 1;
-            if (move != 0){
-                bool not_swapped = true;
-                for (int i = 0; i < shore.GetLength(0); i++){
-                    if (not_swapped && shore[i, 0] != "" && shore[i, move] != ""){
-                        swap(shore, move);
-                        not_swapped = false;
-                    }
-                }
-                if (not_swapped)
-                    for (int i = 0; i < shore.GetLength(0); i++)
-                        if (shore[i, 0] != ""){
-                            print($"{shore[i, 0]} has to be on same side\nto move something else", true);
-                            return false;
-                        }
-            }
+    print("");
+    return made_instructions;
+}
+
+static bool solve(string[,] shore, List<int> instructions, int last_move){ // retry until something works
+    bool all_moved = true;
+    for (int i = 0; i < shore.GetLength(1); i++)
+        if (shore[0, i] == "")
+            all_moved = false;
+
+    if (all_moved)
+        return true;
+
+    for (int move = 0; move < 4; move++){ // try each option
+        if (move == last_move)
+            continue; // if it was last move continue
+
+        // if (move != 0 && shore[0, 0] != shore[0, move])
+        //     continue; // if trying to move object with no farmer
+
+        for (int i = 0; i < shore.GetLength(0); i++)
+            if (move != 0 && shore[0, 0] != shore[0, move])
+                continue; // if trying to move object with no farmer
+
+        if (move != 0) // move other object than obj 0 "farmer"
+            swap(shore, move);
+        swap(shore, 0); // move obj 0
+
+        if (anything_eaten(shore)){ // if anything gets eaten reverse the move
+            if (move != 0)
+                swap(shore, move);
             swap(shore, 0);
         }
-    return true;
+        else{ // successfully went through instructions
+            instructions.Add(move);
+            break;
+        }
     }
+    solve(shore, instructions, instructions[instructions.Count - 1]); // try again until all move
+    return false;
+}
 }
