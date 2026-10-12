@@ -1,5 +1,4 @@
-﻿internal class Program
-{
+﻿internal class Program{
 private static void Main(string[] args){
     Console.Clear();
 
@@ -81,7 +80,7 @@ static void follow_instructions(string[,] shore, int[] instructions){
         show_shore(shore);
         check_eaten(shore);
 
-        bool all_moved = true;
+        bool all_moved = true; // if one has not moved all have not
         for (int i = 0; i < shore.GetLength(1); i++)
             if (shore[win_condition, i] == "")
                 all_moved = false;
@@ -95,9 +94,9 @@ static void follow_instructions(string[,] shore, int[] instructions){
 }
 static void swap(string[,] shore, int column){ // switch row of an object
     string swap;
-    swap = shore[0, column];
-    shore[0, column] = shore[1, column];
-    shore[1, column] = swap;
+    swap = shore[0, column]; // save obj 1
+    shore[0, column] = shore[1, column];  // rewrite obj 1 to obj 2
+    shore[1, column] = swap; // rewrite obj 2 to obj 1
 }
 static void check_eaten(string[,] shore){ // shows how and where things went wrong
     for (int i = 0; i < shore.GetLength(0); i++){
@@ -141,7 +140,6 @@ static int[] make_instructions(string[,] shore){ // start and make instructions
     print("");
     return made_instructions;
 }
-
 static bool solve(string[,] shore, List<int> instructions, int last_move){ // retry until something works
     bool all_moved = true;
     for (int i = 0; i < shore.GetLength(1); i++)
@@ -155,10 +153,10 @@ static bool solve(string[,] shore, List<int> instructions, int last_move){ // re
         if (move == last_move)
             continue; // if it was last move continue
 
-        // if (move != 0 && shore[0, 0] != shore[0, move])
+        // if (move != 0 && shore[0, 0] != shore[0, move]) // this should work but doesnt
         //     continue; // if trying to move object with no farmer
 
-        for (int i = 0; i < shore.GetLength(0); i++)
+        for (int i = 0; i < shore.GetLength(0); i++) // same as above but with for loop and works
             if (move != 0 && shore[0, 0] != shore[0, move])
                 continue; // if trying to move object with no farmer
 
